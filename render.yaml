@@ -2,8 +2,11 @@ services:
   - type: web
     name: fe-web-project
     runtime: static
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
     routes:
       # Định tuyến SPA để tránh lỗi 404 khi reload trang
       - type: rewrite
