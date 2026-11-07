@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wibu Never Die — Key Screen: Protected Home Hub (/)</title>
+  <style>
+    /* ==========================================================================
+       WIBU NEVER DIE — 1:1 KEY SCREEN MOCKUP: PROTECTED HOME HUB (/)
+       Governing Spine Contract:
+       - DESIGN.md:
+         * Colors: Obsidian Canvas (#020509), Slate Glass (#0A1017), Surface Elevated (#0F1823),
+           Border (#1B2938), Spotlight White Primary CTA (#FFFFFF / #02060B),
+           Glacial Cyan (#67E8F9 / #38BDF8), Foreground Ramp (#EEF6FA / #8FA3B3 / #5C7285)
+         * Typography: Inter / system sans display (36px/800/-0.03em), display-sm (28px/700),
+           Editorial Serif Accent (Georgia/Times italic 400 on 1–3 headline words),
+           Telemetry Micro-Badge (10px/700/0.2em uppercase)
+         * Elevation & Depth: Primary CTA Halo + Glacial Cyan Showcase Vignette
+         * Shapes: Controls & Cards (12px rounded.lg), Pills & Avatars (9999px rounded.full)
+         * Components -> Protected hub navbar ({components.protected-hub-navbar})
+         * Components -> Primary CTA button ({components.primary-cta-button})
+       - EXPERIENCE.md:
+         * Information Architecture -> Protected Home Hub (`/`, CAP-3) & OAuth Callback (`/auth/callback`, CAP-6)
+         * Component Patterns -> Protected hub navbar (active user identity + Sign Out -> /login)
+         * State Patterns -> Session hydrating (F5 reload & /auth/callback centered obsidian loader
+           "Syncing session..." + Glacial Cyan spinner + Skeleton navbar pill; zero premature /login flash)
+         * Interaction Primitives & Accessibility Floor -> 44x44px minimum hit targets, WCAG 2.2 AA contrast,
+           #38BDF8 :focus-visible rings, prefers-reduced-motion compliance
+         * Key Flows -> Flow 1 (Step 5 Climax: Minh Nguyen on `/`, Episode 14 ready, F5 persistence, Sign Out, CAP-3)
+         * Key Flows -> Flow 3 (Steps 3–4: /auth/callback session-sync interstitial -> `/`, CAP-6, CAP-3)
+       ========================================================================== */
+
+    :root {
+      --bg-canvas: #020509;
+      --bg-card: #0A1017;
+      --bg-elevated: #0F1823;
+      --border-subtle: #1B2938;
+      --border-ice: rgba(186, 230, 253, 0.11);
+      --input-border: #162230;
+      --primary: #FFFFFF;
+      --primary-fg: #02060B;
+      --accent: #67E8F9;
+      --accent-deep: #38BDF8;
+      --accent-fg: #02060B;
+      --fg-primary: #EEF6FA;
+      --fg-muted: #8FA3B3;
+      --fg-subtle: #5C7285;
+      --ring: #38BDF8;
+      --destructive: #F43F5E;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-serif: "Instrument Serif", Georgia, "Times New Roman", Times, serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: #010306;
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      padding: 32px 24px 72px;
+      background-image:
+        radial-gradient(circle at 18% 0%, rgba(56, 189, 248, 0.07), transparent 42%),
+        radial-gradient(circle at 85% 100%, rgba(103, 232, 249, 0.05), transparent 40%);
+    }
+
+    .serif-accent {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    /* Presentation Wrapper */
+    .sheet {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sheet-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .micro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(103, 232, 249, 0.10);
+      border: 1px solid rgba(56, 189, 248, 0.34);
+      padding: 5px 11px;
+      border-radius: var(--radius-full);
+    }
+
+    .micro-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .sheet-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+    }
+
+    .sheet-subtitle {
+      font-size: 13px;
+      color: var(--fg-muted);
+      max-width: 680px;
+    }
+
+    .spine-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .spine-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+    }
+
+    .frame-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .frame-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .frame-caption {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .frame-caption strong {
+      color: var(--fg-primary);
+      font-weight: 700;
+    }
+
+    .frame-meta {
+      font-size: 11px;
+      color: var(--fg-subtle);
+    }
+
+    /* ==========================================================================
+       DEVICE CHROME (DESKTOP BROWSER & COMPACT VIEWPORT FRAMES)
+       ========================================================================== */
+    .browser-window {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.78),
+        0 0 0 1px rgba(186, 230, 253, 0.05);
+    }
+
+    .browser-chrome {
+      height: 42px;
+      background: #060B11;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .window-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 64px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1B2938;
+      border: 1px solid rgba(186, 230, 253, 0.12);
+    }
+
+    .address-bar {
+      flex: 1;
+      max-width: 520px;
+      height: 26px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-md);
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--fg-muted);
+    }
+
+    .address-url {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .address-url .domain {
+      color: var(--fg-primary);
+      font-weight: 500;
+    }
+
+    .address-guard-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .chrome-spec {
+      font-size: 11px;
+      color: var(--fg-subtle);
+      min-width: 64px;
+      text-align: right;
+    }
+
+    /* ==========================================================================
+       COMPONENT: PROTECTED HUB NAVBAR ({components.protected-hub-navbar})
+       Sticky 64px height, backdrop-blur-md over #020509, 1px bottom #1B2938
+       ========================================================================== */
+    .hub-viewport {
+      background: var(--bg-canvas);
+      position: relative;
+    }
+
+    .protected-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 64px;
+      background: rgba(2, 5, 9, 0.84);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg-primary);
+    }
+
+    .brand-emblem {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, rgba(103, 232, 249, 0.16), rgba(15, 24, 35, 0.95));
+      border: 1px solid rgba(103, 232, 249, 0.38);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.18);
+      flex-shrink: 0;
+    }
+
+    .brand-wordmark {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      text-decoration: none;
+      transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1), background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-link:hover {
+      color: var(--fg-primary);
+      background: rgba(186, 230, 253, 0.04);
+    }
+
+    .nav-link.is-active {
+      color: var(--fg-primary);
+      font-weight: 600;
+      background: rgba(103, 232, 249, 0.06);
+    }
+
+    .nav-active-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Elevated #0F1823 User Pill */
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 40px;
+      padding: 4px 14px 4px 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+    }
+
+    .avatar-initials {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background: rgba(103, 232, 249, 0.13);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(103, 232, 249, 0.2);
+      flex-shrink: 0;
+    }
+
+    .user-identity {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg-primary);
+      white-space: nowrap;
+    }
+
+    /* Accessible 44px Sign Out Ghost/Outline Button */
+    .btn-signout {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      height: 44px;
+      min-width: 44px;
+      padding: 0 14px;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-signout:hover {
+      background: var(--bg-elevated);
+      border-color: rgba(103, 232, 249, 0.32);
+    }
+
+    .btn-signout:focus-visible,
+    .btn-primary-cta:focus-visible,
+    .btn-secondary-glass:focus-visible,
+    .nav-link:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+       DESKTOP HUB BODY: HERO BANNER + CONTINUE WATCHING & READING RAIL
+       ========================================================================== */
+    .hub-main {
+      padding: 32px 40px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .hero-banner {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 40px 44px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+      align-items: center;
+      gap: 32px;
+      background-image:
+        radial-gradient(circle at 76% 38%, rgba(56, 189, 248, 0.15), rgba(10, 16, 23, 0.0) 58%),
+        linear-gradient(135deg, rgba(103, 232, 249, 0.04) 0%, rgba(2, 5, 9, 0.65) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hero-heading {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--fg-primary);
+    }
+
+    .hero-heading .serif-accent {
+      font-size: 40px;
+      color: var(--fg-primary);
+      padding-right: 2px;
+    }
+
+    .hero-copy {
+      font-size: 14px;
+      color: var(--fg-muted);
+      max-width: 520px;
+    }
+
+    .hero-copy strong {
+      color: var(--fg-primary);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    /* Single Primary CTA per screen (#FFFFFF fill, #02060B text, 44px height, 12px radius) */
+    .btn-primary-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      height: 44px;
+      padding: 0 22px;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      box-shadow:
+        0 0 24px rgba(103, 232, 249, 0.25),
+        0 0 12px rgba(255, 255, 255, 0.14);
+      transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary-cta:hover {
+      box-shadow:
+        0 0 30px rgba(103, 232, 249, 0.34),
+        0 0 16px rgba(255, 255, 255, 0.22);
+    }
+
+    /* Secondary Glass Action Button */
+    .btn-secondary-glass {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      height: 44px;
+      padding: 0 18px;
+      background: rgba(186, 230, 253, 0.05);
+      color: var(--fg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1), border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-secondary-glass:hover {
+      background: var(--bg-elevated);
+      border-color: rgba(103, 232, 249, 0.30);
+    }
+
+    /* Duotone Glacial Cyan Editorial Artwork Panel inside Hero */
+    .hero-artwork {
+      position: relative;
+      z-index: 1;
+      height: 196px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(186, 230, 253, 0.13);
+      background:
+        radial-gradient(circle at 65% 28%, rgba(103, 232, 249, 0.26), transparent 52%),
+        linear-gradient(180deg, #0D1824 0%, #050A10 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+    }
+
+    .hero-artwork svg.scene-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-artwork-caption {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: rgba(2, 5, 9, 0.78);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(186, 230, 253, 0.12);
+    }
+
+    .artwork-series {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fg-primary);
+    }
+
+    .artwork-ep {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       CONTINUE WATCHING & READING — 4-CARD RAIL
+       ========================================================================== */
+    .rail-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .rail-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .rail-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rail-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg-primary);
+    }
+
+    .sync-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sync-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-deep);
+    }
+
+    .rail-meta-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .card-rail {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .media-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .media-card:hover {
+      border-color: rgba(103, 232, 249, 0.36);
+    }
+
+    .media-poster {
+      position: relative;
+      height: 132px;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(186, 230, 253, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 12px;
+    }
+
+    .poster-art-1 {
+      background:
+        radial-gradient(circle at 75% 24%, rgba(103, 232, 249, 0.28), transparent 55%),
+        linear-gradient(160deg, #0E1D2C 0%, #050A11 100%);
+    }
+
+    .poster-art-2 {
+      background:
+        radial-gradient(circle at 26% 30%, rgba(56, 189, 248, 0.25), transparent 52%),
+        linear-gradient(145deg, #0A1826 0%, #04070D 100%);
+    }
+
+    .poster-art-3 {
+      background:
+        radial-gradient(circle at 68% 65%, rgba(103, 232, 249, 0.22), transparent 58%),
+        linear-gradient(175deg, #102030 0%, #05090F 100%);
+    }
+
+    .poster-art-4 {
+      background:
+        radial-gradient(circle at 50% 25%, rgba(103, 232, 249, 0.24), transparent 56%),
+        repeating-linear-gradient(-45deg, rgba(186, 230, 253, 0.03) 0px, rgba(186, 230, 253, 0.03) 2px, transparent 2px, transparent 9px),
+        linear-gradient(165deg, #0D1926 0%, #04080E 100%);
+    }
+
+    .poster-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .poster-top-row {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .media-type-pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(2, 5, 9, 0.76);
+      border: 1px solid rgba(186, 230, 253, 0.16);
+      color: var(--fg-primary);
+    }
+
+    .chapter-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      background: rgba(103, 232, 249, 0.15);
+      border: 1px solid var(--accent-deep);
+      color: var(--accent);
+    }
+
+    .poster-play-chip {
+      position: relative;
+      z-index: 2;
+      align-self: flex-end;
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      background: rgba(2, 5, 9, 0.80);
+      border: 1px solid rgba(103, 232, 249, 0.35);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .media-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--fg-primary);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-subrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+
+    .media-pct {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+      border-radius: var(--radius-full);
+      box-shadow: 0 0 8px rgba(103, 232, 249, 0.45);
+    }
+
+    /* ==========================================================================
+       FRAME 2: SIDE-BY-SIDE COMPACT FRAMES
+       (A) Mobile 360px Authenticated Hub   (B) F5 / OAuth Session Hydrating State
+       ========================================================================== */
+    .compact-grid {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    /* Exact 360px Mobile Floor Frame — Zero Horizontal Overflow */
+    .mobile-device {
+      width: 360px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(186, 230, 253, 0.06);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-status-bar {
+      height: 28px;
+      padding: 0 20px;
+      background: #050910;
+      border-bottom: 1px solid rgba(27, 41, 56, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-muted);
+    }
+
+    .mobile-navbar {
+      height: 64px;
+      padding: 0 20px; /* {spacing.mobile-gutter}: 20px */
+      background: rgba(2, 5, 9, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .mobile-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .mobile-brand-text {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+      white-space: nowrap;
+    }
+
+    .mobile-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .mobile-user-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 8px 0 4px;
+      gap: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+    }
+
+    .mobile-user-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--fg-primary);
+    }
+
+    .mobile-signout-btn {
+      height: 44px;
+      min-width: 44px;
+      padding: 0 11px;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .mobile-body {
+      padding: 20px; /* {spacing.mobile-gutter}: 20px */
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-x: hidden;
+    }
+
+    .mobile-greeting {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-headline {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+    }
+
+    .mobile-subcopy {
+      font-size: 13px;
+      color: var(--fg-muted);
+    }
+
+    .mobile-section-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--fg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-section-label span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .mobile-cta-full {
+      width: 100%;
+    }
+
+    /* ==========================================================================
+       INTERSTITIAL FRAME: F5 RELOAD & /auth/callback SESSION HYDRATING
+       ========================================================================== */
+    .hydrating-window {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(186, 230, 253, 0.05);
+    }
+
+    .skeleton-navbar {
+      height: 64px;
+      padding: 0 28px;
+      background: rgba(2, 5, 9, 0.86);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .skeleton-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    @keyframes pulseShimmer {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+
+    .skeleton-block {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(186, 230, 253, 0.06);
+      animation: pulseShimmer 1.8s ease-in-out infinite;
+    }
+
+    .skeleton-link {
+      width: 54px;
+      height: 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .skeleton-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 40px;
+      padding: 4px 14px 4px 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+    }
+
+    .skeleton-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background: rgba(103, 232, 249, 0.10);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .skeleton-name-bar {
+      width: 84px;
+      height: 11px;
+      border-radius: var(--radius-full);
+      background: #172434;
+    }
+
+    .skeleton-btn {
+      width: 86px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      background: rgba(15, 24, 35, 0.55);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hydrating-stage {
+      flex: 1;
+      min-height: 420px;
+      padding: 40px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(56, 189, 248, 0.09), transparent 52%),
+        var(--bg-canvas);
+    }
+
+    @keyframes glacialSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner-shell {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      box-shadow: 0 0 28px rgba(103, 232, 249, 0.14);
+    }
+
+    .glacial-spinner {
+      width: 28px;
+      height: 28px;
+      animation: glacialSpin 1s linear infinite;
+    }
+
+    .hydrating-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--fg-primary);
+      margin-bottom: 6px;
+    }
+
+    .hydrating-subcopy {
+      font-size: 13px;
+      color: var(--fg-muted);
+      max-width: 340px;
+      margin-bottom: 24px;
+    }
+
+    .hydrating-telemetry {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+
+    .hydrating-telemetry code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .glacial-spinner,
+      .skeleton-block {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .hero-banner {
+        grid-template-columns: 1fr;
+      }
+      .card-rail {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .compact-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-device {
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+
+    <!-- Sheet Context Header -->
+    <header class="sheet-header">
+      <div class="sheet-title-group">
+        <span class="micro-badge">
+          <span class="micro-badge-dot" aria-hidden="true"></span>
+          KEY SCREEN 04 · PROTECTED HOME HUB
+        </span>
+        <h1 class="sheet-title">Wibu Never Die — Guarded Destination (<span class="serif-accent">/</span>) &amp; Session Hydration</h1>
+        <p class="sheet-subtitle">
+          1:1 visual reference for the authenticated streaming &amp; manga hub shell, <code>Protected hub navbar</code> identity pill + <code>Sign Out</code> action, <code>360px</code> mobile collapse, and <code>F5</code> / <code>/auth/callback</code> session-sync interstitial.
+        </p>
+      </div>
+      <div class="spine-tags" aria-label="Governing spine sections">
+        <span class="spine-tag">Protected hub navbar</span>
+        <span class="spine-tag">Session hydrating</span>
+        <span class="spine-tag">Flow 1 &amp; Flow 3</span>
+        <span class="spine-tag">CAP-3 · CAP-6</span>
+      </div>
+    </header>
+
+    <!-- ========================================================================
+         FRAME 1: DESKTOP BROWSER FRAME (`/` AUTHENTICATED HOME HUB)
+         ======================================================================== -->
+    <section class="frame-section" aria-label="Desktop Protected Home Hub">
+      <div class="frame-label-row">
+        <div class="frame-caption">
+          <strong>Frame 1 — Desktop Browser (`≥ 1024px`)</strong>
+          <span>·</span>
+          <span>Authenticated Home Hub (`/`) after Sign-In or Google OAuth</span>
+        </div>
+        <div class="frame-meta">Canvas #020509 · Card #0A1017 · Elevated Pill #0F1823 · Glacial Cyan #67E8F9</div>
+      </div>
+
+      <div class="browser-window">
+        <!-- Browser Chrome -->
+        <div class="browser-chrome" aria-hidden="true">
+          <div class="window-dots">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+          </div>
+          <div class="address-bar">
+            <span class="address-url">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>https://<span class="domain">wibuneverdie.app</span>/</span>
+            </span>
+            <span class="address-guard-tag">ProtectedRoute · Active</span>
+          </div>
+          <div class="chrome-spec">1280px</div>
+        </div>
+
+        <!-- Viewport -->
+        <div class="hub-viewport">
+          <!-- Sticky 64px Frosted-Glass Protected Hub Navbar -->
+          <nav class="protected-navbar" aria-label="Primary navigation">
+            <div class="nav-left">
+              <a href="#top" class="brand-lockup">
+                <span class="brand-emblem" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                  </svg>
+                </span>
+                <span class="brand-wordmark">Wibu Never Die</span>
+              </a>
+
+              <ul class="nav-links">
+                <li>
+                  <a href="#home" class="nav-link is-active" aria-current="page">
+                    <span class="nav-active-dot" aria-hidden="true"></span>
+                    Home
+                  </a>
+                </li>
+                <li><a href="#browse" class="nav-link">Browse</a></li>
+                <li><a href="#manga" class="nav-link">Manga</a></li>
+                <li><a href="#watchlist" class="nav-link">Watchlist</a></li>
+              </ul>
+            </div>
+
+            <div class="nav-right">
+              <div class="user-pill" aria-label="Signed in as Minh Nguyen">
+                <span class="avatar-initials" aria-hidden="true">MN</span>
+                <div class="user-identity">
+                  <span class="user-name">Minh Nguyen</span>
+                </div>
+              </div>
+
+              <button type="button" class="btn-signout">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          </nav>
+
+          <!-- Hub Main Content -->
+          <main class="hub-main">
+            <!-- Personalized Seasonal Spotlight Hero -->
+            <section class="hero-banner" aria-label="Seasonal spotlight">
+              <div class="hero-content">
+                <span class="micro-badge">
+                  <span class="micro-badge-dot" aria-hidden="true"></span>
+                  SEASONAL SPOTLIGHT · EPISODE 14 READY
+                </span>
+                <h2 class="hero-heading">
+                  Welcome back, <em class="serif-accent">Minh</em>.
+                </h2>
+                <p class="hero-copy">
+                  Pick up right where the episode ended — <strong>Cybernetic Requiem: Neon Drift</strong> is queued at <strong>18:12</strong>, and your manga bookmarks are synced.
+                </p>
+                <div class="hero-actions">
+                  <button type="button" class="btn-primary-cta">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                    </svg>
+                    Resume Episode 14
+                  </button>
+                  <button type="button" class="btn-secondary-glass">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    Read Chapter 112
+                  </button>
+                </div>
+              </div>
+
+              <!-- Atmospheric Duotone Glacial Cyan Visual Stage -->
+              <div class="hero-artwork" aria-hidden="true">
+                <svg class="scene-art" viewBox="0 0 420 200" preserveAspectRatio="xMidYMid slice">
+                  <defs>
+                    <linearGradient id="cyanBeam" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.45" />
+                      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="312" cy="54" r="34" fill="none" stroke="#67E8F9" stroke-opacity="0.38" stroke-width="1.2" />
+                  <circle cx="312" cy="54" r="20" fill="#67E8F9" fill-opacity="0.14" />
+                  <polygon points="230,0 355,0 265,200 175,200" fill="url(#cyanBeam)" opacity="0.35" />
+                  <path d="M0 156 L58 124 L96 142 L152 94 L204 134 L256 108 L318 138 L374 102 L420 128 L420 200 L0 200 Z" fill="#060D16" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="1" />
+                  <line x1="24" y1="36" x2="132" y2="36" stroke="#67E8F9" stroke-opacity="0.22" stroke-width="1" />
+                  <line x1="24" y1="44" x2="86" y2="44" stroke="#67E8F9" stroke-opacity="0.14" stroke-width="1" />
+                </svg>
+                <div class="hero-artwork-caption">
+                  <div>
+                    <div class="artwork-series">Cybernetic Requiem: Neon Drift</div>
+                    <div class="artwork-ep">EP 14 · "Midnight Overpass" · 24m</div>
+                  </div>
+                  <span class="chapter-badge">HD · SUB</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Continue Watching & Reading 4-Card Rail -->
+            <section class="rail-section" aria-label="Continue Watching and Reading">
+              <div class="rail-header">
+                <div class="rail-title-wrap">
+                  <h3 class="rail-title">Continue Watching &amp; Reading</h3>
+                  <span class="sync-pill">
+                    <span class="sync-pill-dot" aria-hidden="true"></span>
+                    Synced · minh@wibu.dev
+                  </span>
+                </div>
+                <a href="#history" class="rail-meta-link">View Watchlist &rarr;</a>
+              </div>
+
+              <div class="card-rail">
+                <!-- Card 1: 75% Progress -->
+                <article class="media-card">
+                  <div class="media-poster poster-art-1">
+                    <svg class="poster-svg" viewBox="0 0 280 132" preserveAspectRatio="none" aria-hidden="true">
+                      <circle cx="222" cy="36" r="24" fill="#67E8F9" fill-opacity="0.14" />
+                      <path d="M0 108 L70 74 L124 96 L192 54 L280 92 L280 132 L0 132 Z" fill="#050A12" stroke="#67E8F9" stroke-opacity="0.24" />
+                    </svg>
+                    <div class="poster-top-row">
+                      <span class="media-type-pill">ANIME</span>
+                    </div>
+                    <span class="poster-play-chip" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+                    </span>
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-title">Cybernetic Requiem: Neon Drift</h4>
+                    <div class="media-subrow">
+                      <span>Episode 14 · 18:12 left</span>
+                      <span class="media-pct">75%</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Episode 14 progress 75%">
+                      <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 2: 40% Progress -->
+                <article class="media-card">
+                  <div class="media-poster poster-art-2">
+                    <svg class="poster-svg" viewBox="0 0 280 132" preserveAspectRatio="none" aria-hidden="true">
+                      <polygon points="48,18 96,112 12,112" fill="#38BDF8" fill-opacity="0.12" stroke="#67E8F9" stroke-opacity="0.25" />
+                      <path d="M0 112 L94 84 L168 104 L240 68 L280 86 L280 132 L0 132 Z" fill="#04080E" />
+                    </svg>
+                    <div class="poster-top-row">
+                      <span class="media-type-pill">ANIME</span>
+                    </div>
+                    <span class="poster-play-chip" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+                    </span>
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-title">Astral Blade: Winter Arc</h4>
+                    <div class="media-subrow">
+                      <span>Episode 07 · 09:36 / 24:00</span>
+                      <span class="media-pct">40%</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Episode 7 progress 40%">
+                      <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 3: 90% Progress -->
+                <article class="media-card">
+                  <div class="media-poster poster-art-3">
+                    <svg class="poster-svg" viewBox="0 0 280 132" preserveAspectRatio="none" aria-hidden="true">
+                      <rect x="176" y="22" width="64" height="86" fill="none" stroke="#67E8F9" stroke-opacity="0.22" />
+                      <line x1="0" y1="96" x2="280" y2="66" stroke="#38BDF8" stroke-opacity="0.28" />
+                    </svg>
+                    <div class="poster-top-row">
+                      <span class="media-type-pill">ANIME</span>
+                    </div>
+                    <span class="poster-play-chip" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+                    </span>
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-title">Echoes of Shinjuku Station</h4>
+                    <div class="media-subrow">
+                      <span>Episode 11 · 21:40 / 24:00</span>
+                      <span class="media-pct">90%</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="Episode 11 progress 90%">
+                      <div class="progress-fill" style="width: 90%;"></div>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 4: Manga with Chapter 84 Badge -->
+                <article class="media-card">
+                  <div class="media-poster poster-art-4">
+                    <svg class="poster-svg" viewBox="0 0 280 132" preserveAspectRatio="none" aria-hidden="true">
+                      <line x1="140" y1="0" x2="112" y2="132" stroke="#67E8F9" stroke-opacity="0.22" />
+                      <circle cx="140" cy="64" r="32" fill="none" stroke="#67E8F9" stroke-opacity="0.24" />
+                    </svg>
+                    <div class="poster-top-row">
+                      <span class="media-type-pill">MANGA</span>
+                      <span class="chapter-badge">CHAPTER 84</span>
+                    </div>
+                    <span class="poster-play-chip" aria-hidden="true">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <div class="media-body">
+                    <h4 class="media-title">Hollow Crown Chronicles</h4>
+                    <div class="media-subrow">
+                      <span>Page 19 of 22</span>
+                      <span class="media-pct">Ch. 84</span>
+                    </div>
+                    <div class="progress-track" role="progressbar" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100" aria-label="Chapter 84 reading progress 86%">
+                      <div class="progress-fill" style="width: 86%;"></div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         FRAME 2: MOBILE 360px NAVBAR + F5 SESSION HYDRATING INTERSTITIAL
+         ======================================================================== -->
+    <section class="frame-section" aria-label="Mobile 360px Hub and Session Hydrating State">
+      <div class="frame-label-row">
+        <div class="frame-caption">
+          <strong>Frame 2 — Mobile `360px` Floor &amp; `F5` / `/auth/callback` Session Hydrating State</strong>
+          <span>·</span>
+          <span>Responsive collapse &amp; zero-flash rehydration</span>
+        </div>
+        <div class="frame-meta">20px Mobile Gutters · 44px Touch Targets · Glacial Cyan Spinner</div>
+      </div>
+
+      <div class="compact-grid">
+
+        <!-- (A) Mobile 360px Authenticated Hub Frame -->
+        <div class="mobile-device" aria-label="Mobile 360px Protected Home Hub">
+          <div class="mobile-status-bar" aria-hidden="true">
+            <span>23:48</span>
+            <span>360px · 5G</span>
+          </div>
+
+          <!-- Compact 64px Mobile Protected Hub Navbar -->
+          <header class="mobile-navbar">
+            <div class="mobile-brand">
+              <span class="brand-emblem" aria-hidden="true" style="width: 26px; height: 26px; border-radius: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                </svg>
+              </span>
+              <span class="mobile-brand-text">Wibu Never Die</span>
+            </div>
+
+            <div class="mobile-nav-actions">
+              <div class="mobile-user-pill" aria-label="Signed in as Minh Nguyen">
+                <span class="avatar-initials" style="width: 26px; height: 26px; font-size: 10px;" aria-hidden="true">MN</span>
+                <span class="mobile-user-tag">Minh</span>
+              </div>
+              <button type="button" class="mobile-signout-btn" aria-label="Sign Out">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sign Out
+              </button>
+            </div>
+          </header>
+
+          <!-- 1-Column Mobile Hub Stage (20px gutters, zero horizontal overflow) -->
+          <div class="mobile-body">
+            <div class="mobile-greeting">
+              <span class="micro-badge">EPISODE 14 READY</span>
+              <h2 class="mobile-headline">Welcome back, <em class="serif-accent">Minh</em>.</h2>
+              <p class="mobile-subcopy">Your late-night queue is synced and ready.</p>
+            </div>
+
+            <div class="mobile-section-label">
+              Continue Watching
+              <span>Synced</span>
+            </div>
+
+            <!-- 1-Column Continue Watching Card -->
+            <article class="media-card">
+              <div class="media-poster poster-art-1" style="height: 124px;">
+                <svg class="poster-svg" viewBox="0 0 320 124" preserveAspectRatio="none" aria-hidden="true">
+                  <circle cx="246" cy="34" r="22" fill="#67E8F9" fill-opacity="0.16" />
+                  <path d="M0 98 L82 68 L152 88 L226 50 L320 82 L320 124 L0 124 Z" fill="#050A12" stroke="#67E8F9" stroke-opacity="0.26" />
+                </svg>
+                <div class="poster-top-row">
+                  <span class="media-type-pill">ANIME · EP 14</span>
+                  <span class="chapter-badge">75%</span>
+                </div>
+                <span class="poster-play-chip" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+                </span>
+              </div>
+              <div class="media-body">
+                <h3 class="media-title">Cybernetic Requiem: Neon Drift</h3>
+                <div class="media-subrow">
+                  <span>18:12 / 24:00</span>
+                  <span class="media-pct">Resume</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Episode 14 progress 75%">
+                  <div class="progress-fill" style="width: 75%;"></div>
+                </div>
+              </div>
+            </article>
+
+            <button type="button" class="btn-secondary-glass mobile-cta-full">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+              </svg>
+              Resume Episode 14
+            </button>
+          </div>
+        </div>
+
+        <!-- (B) F5 Reload / /auth/callback Session Hydrating Interstitial -->
+        <div class="hydrating-window" aria-label="Session Hydrating Interstitial State">
+          <div class="browser-chrome" aria-hidden="true">
+            <div class="window-dots">
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+              <span class="window-dot"></span>
+            </div>
+            <div class="address-bar">
+              <span class="address-url">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                <span>https://<span class="domain">wibuneverdie.app</span>/auth/callback?token=eyJ...</span>
+              </span>
+              <span class="address-guard-tag">F5 / OAuth Sync</span>
+            </div>
+            <div class="chrome-spec">Hydrating</div>
+          </div>
+
+          <!-- Skeleton Navbar Pill during Zustand Rehydration -->
+          <div class="skeleton-navbar" aria-hidden="true">
+            <div class="skeleton-nav-group">
+              <span class="brand-emblem" style="width: 28px; height: 28px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                </svg>
+              </span>
+              <span class="brand-wordmark">Wibu Never Die</span>
+              <span class="skeleton-block skeleton-link" style="margin-left: 16px;"></span>
+              <span class="skeleton-block skeleton-link"></span>
+            </div>
+
+            <div class="skeleton-nav-group">
+              <div class="skeleton-user-pill skeleton-block">
+                <span class="skeleton-avatar"></span>
+                <span class="skeleton-name-bar"></span>
+              </div>
+              <span class="skeleton-btn"></span>
+            </div>
+          </div>
+
+          <!-- Centered Obsidian Loader Stage -->
+          <div class="hydrating-stage" role="status" aria-live="polite">
+            <div class="spinner-shell" aria-hidden="true">
+              <svg class="glacial-spinner" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9.5" stroke="#1B2938" stroke-width="2.5" />
+                <path d="M12 2.5a9.5 9.5 0 0 1 9.5 9.5" stroke="#67E8F9" stroke-width="2.5" stroke-linecap="round" />
+              </svg>
+            </div>
+            <p class="hydrating-title">Syncing session...</p>
+            <p class="hydrating-subcopy">
+              Rehydrating persisted token and active profile before rendering protected routes — never flashes <code>/login</code> prematurely.
+            </p>
+            <div class="hydrating-telemetry">
+              <span class="micro-badge-dot" aria-hidden="true"></span>
+              <span><code>ProtectedRoute</code> &amp; <code>/auth/callback</code> · <code>AuthService.getCurrentUser()</code></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

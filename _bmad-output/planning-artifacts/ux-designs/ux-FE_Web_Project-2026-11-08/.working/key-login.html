@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wibu Never Die — Key Screen Mockup: /login</title>
+  <style>
+    /* ==========================================================================
+       BMAD UX KEY SCREEN MOCKUP — /login (Sign In Gateway)
+       Product: Wibu Never Die (Dark-Cinema Anime Streaming & Manga Reading Hub)
+
+       GOVERNING SPINE SECTIONS
+       1. DESIGN.md:
+          - Brand & Style (Dark-Mode Only obsidian screening room, Glacial Cyan accents)
+          - Colors (#020509 background, #0A1017 card, #0F1823 surface-elevated,
+            #1B2938 border, #162230 input, #FFFFFF primary CTA on #02060B,
+            #67E8F9 accent, #38BDF8 accent-deep/ring, #EEF6FA foreground,
+            #8FA3B3 muted-foreground, #5C7285 subtle-foreground, #F43F5E destructive)
+          - Typography (display 36px/800, display-sm 28px/700, serif-accent italic,
+            micro-badge 10px/700/0.2em)
+          - Layout & Spacing (55/45 desktop split-stage, form-max 400px,
+            desktop-stage-pad 48px, field-gap 16px)
+          - Elevation & Depth (Primary CTA Halo + Glacial Cyan Showcase Vignette)
+          - Shapes (rounded.lg 12px controls/banners, rounded.full 9999px badges)
+          - Components:
+            * Split-stage auth shell ({components.split-stage-auth-shell})
+            * Primary CTA button ({components.primary-cta-button})
+            * Google OAuth button ({components.google-oauth-button})
+            * Auth text input ({components.auth-text-input})
+            * Password input ({components.password-input})
+            * Auth status banner ({components.auth-status-banner})
+
+       2. EXPERIENCE.md:
+          - Information Architecture: /login (CAP-2, CAP-4, CAP-6)
+          - Voice and Tone (/login header, Post-signup banner, Credential failure)
+          - Component Patterns: Split-stage auth shell, Primary CTA button,
+            Google OAuth button, Auth text input, Password input, Auth status banner
+          - State Patterns: Post-registration arrival, Server / credential error
+          - Interaction Primitives (44px hit targets, visual Tab order:
+            Google OAuth -> inputs -> eye toggle -> Forgot password? -> Primary CTA -> Create account)
+          - Accessibility Floor (WCAG 2.2 AA contrast, explicit <label>, role="status" / role="alert")
+          - Key Flows:
+            * Flow 1 — Late-Night Account Creation & First Sign-In (Steps 1, 3, 4 & failure path)
+            * Flow 3 — Single-Click Google OAuth Sign-In (Step 1)
+       ========================================================================== */
+
+    :root {
+      --bg-canvas: #020509;
+      --fg-primary: #EEF6FA;
+      --bg-card: #0A1017;
+      --bg-elevated: #0F1823;
+      --border-subtle: #1B2938;
+      --border-glass: rgba(186, 230, 253, 0.11);
+      --border-input: #162230;
+      --cta-bg: #FFFFFF;
+      --cta-fg: #02060B;
+      --accent: #67E8F9;
+      --accent-deep: #38BDF8;
+      --fg-muted: #8FA3B3;
+      --fg-subtle: #5C7285;
+      --ring: #38BDF8;
+      --destructive: #F43F5E;
+      --destructive-fg: #FFF1F2;
+
+      --radius-lg: 12px;
+      --radius-full: 9999px;
+
+      --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: "Instrument Serif", Georgia, "Times New Roman", Times, serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: #010306;
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      padding: 40px 28px 72px;
+    }
+
+    .serif-accent {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    /* Presentation Wrapper */
+    .mockup-sheet {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sheet-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(103, 232, 249, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      padding: 4px 11px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+    }
+
+    .sheet-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+    }
+
+    .sheet-subtitle {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin-top: 4px;
+    }
+
+    .token-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .token-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--fg-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    /* Section Headers */
+    .state-section {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .state-heading-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .state-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .state-index {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cta-fg);
+      background: var(--accent);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+    }
+
+    .state-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg-primary);
+    }
+
+    .state-meta {
+      font-size: 12px;
+      color: var(--fg-muted);
+    }
+
+    /* Realistic Browser Frame */
+    .browser-window {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.78),
+        0 0 0 1px rgba(186, 230, 253, 0.05);
+    }
+
+    .browser-chrome {
+      height: 42px;
+      background: #060B11;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .win-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1B2938;
+    }
+    .win-dot.close { background: rgba(244, 63, 94, 0.45); }
+    .win-dot.min   { background: rgba(250, 204, 21, 0.38); }
+    .win-dot.max   { background: rgba(56, 189, 248, 0.42); }
+
+    .address-bar {
+      flex: 0 1 420px;
+      height: 26px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 11.5px;
+      color: var(--fg-muted);
+    }
+
+    .address-bar .domain {
+      color: var(--fg-muted);
+    }
+
+    .address-bar .route {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .chrome-spec-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg-subtle);
+    }
+
+    /* ==========================================================================
+       COMPONENT: Split-stage auth shell ({components.split-stage-auth-shell})
+       55% Left Showcase (#0A1017) | 45% Right Form Stage (#020509)
+       ========================================================================== */
+    .split-stage-shell {
+      display: grid;
+      grid-template-columns: 55% 45%;
+      min-height: 760px;
+      background: var(--bg-canvas);
+    }
+
+    /* Left 55% Editorial Duotone Glacial Cyan Poster Stage */
+    .showcase-stage {
+      position: relative;
+      background-color: var(--bg-card);
+      border-right: 1px solid var(--border-subtle);
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* Showcase Vignette & Duotone Glacial Cyan Cinema Composition */
+    .showcase-artwork {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 38% 36%, rgba(56, 189, 248, 0.17) 0%, rgba(103, 232, 249, 0.06) 34%, rgba(10, 16, 23, 0) 68%),
+        radial-gradient(ellipse 85% 55% at 18% 92%, rgba(56, 189, 248, 0.12) 0%, transparent 70%),
+        linear-gradient(105deg, #0A1017 0%, #080E15 72%, #020509 100%);
+    }
+
+    /* Architectural Manga Panel Grid & Screening Beam */
+    .manga-frame-grid {
+      position: absolute;
+      inset: 28px;
+      border: 1px solid rgba(186, 230, 253, 0.07);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .manga-frame-grid::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(103, 232, 249, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(103, 232, 249, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 45% 42%, black 15%, transparent 78%);
+      -webkit-mask-image: radial-gradient(circle at 45% 42%, black 15%, transparent 78%);
+    }
+
+    .cinema-illustration-svg {
+      position: absolute;
+      top: 52px;
+      right: -12px;
+      width: 104%;
+      height: 430px;
+      opacity: 0.92;
+    }
+
+    /* Seam vignette fading cleanly into #020509 */
+    .showcase-seam-fade {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 96px;
+      background: linear-gradient(to right, rgba(2, 5, 9, 0), rgba(2, 5, 9, 0.72));
+      pointer-events: none;
+    }
+
+    /* Wordmark Header */
+    .showcase-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--fg-primary);
+    }
+
+    .brand-emblem {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, rgba(103, 232, 249, 0.18), rgba(15, 24, 35, 0.95));
+      border: 1px solid rgba(103, 232, 249, 0.42);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .brand-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+    }
+
+    .brand-name span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .screening-telemetry {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+    }
+
+    /* Bottom Showcase Editorial Copy & Episode Progress Card */
+    .showcase-bottom {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .micro-badge {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(103, 232, 249, 0.10);
+      border: 1px solid rgba(56, 189, 248, 0.38);
+      padding: 6px 13px;
+      border-radius: var(--radius-full);
+    }
+
+    .micro-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .showcase-headline {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--fg-primary);
+    }
+
+    .showcase-headline .serif-accent {
+      color: var(--accent);
+      font-size: 40px;
+      padding: 0 2px;
+    }
+
+    .showcase-subcopy {
+      font-size: 14px;
+      color: var(--fg-muted);
+      line-height: 1.55;
+      max-width: 450px;
+    }
+
+    /* Subtle Episode-Progress Card Detail (Ties to Flow 1 Episode 14 Bookmark) */
+    .episode-sync-card {
+      margin-top: 4px;
+      background: rgba(15, 24, 35, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 430px;
+    }
+
+    .ep-thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), #0A1017);
+      border: 1px solid rgba(103, 232, 249, 0.30);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .ep-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ep-meta-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+
+    .ep-series {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--fg-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ep-timestamp {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .ep-chapter-note {
+      font-size: 11.5px;
+      color: var(--fg-muted);
+      margin-bottom: 8px;
+    }
+
+    .ep-progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(186, 230, 253, 0.12);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .ep-progress-fill {
+      width: 82%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+      border-radius: var(--radius-full);
+      box-shadow: 0 0 10px rgba(103, 232, 249, 0.6);
+    }
+
+    /* ==========================================================================
+       Right 45% Form Stage (#020509, 48px stage pad, 400px form-max)
+       ========================================================================== */
+    .form-stage {
+      background: var(--bg-canvas);
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-form-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .auth-heading {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--fg-primary);
+    }
+
+    .auth-heading .serif-accent {
+      color: var(--accent);
+      font-size: 31px;
+      padding-left: 2px;
+    }
+
+    .auth-subtitle {
+      font-size: 14px;
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       COMPONENT: Auth status banner ({components.auth-status-banner})
+       ========================================================================== */
+    .auth-status-banner {
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .auth-status-banner svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .auth-status-banner.is-info {
+      background: rgba(103, 232, 249, 0.10);
+      border: 1px solid var(--accent-deep);
+      color: var(--accent);
+    }
+
+    .auth-status-banner.is-error {
+      background: rgba(244, 63, 94, 0.10);
+      border: 1px solid var(--destructive);
+      color: var(--destructive-fg);
+    }
+
+    .auth-status-banner.is-error svg {
+      color: var(--destructive);
+    }
+
+    /* ==========================================================================
+       COMPONENT: Google OAuth button ({components.google-oauth-button})
+       44px height, #0A1017 glass surface, 1px #1B2938 border, 12px radius
+       ========================================================================== */
+    .btn-google-oauth {
+      width: 100%;
+      height: 44px;
+      background: linear-gradient(180deg, rgba(186, 230, 253, 0.045), rgba(10, 16, 23, 0.92));
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Hairline Divider */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--fg-subtle);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* Form Fields Stack ({spacing.field-gap}: 16px) */
+    .fields-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-primary);
+    }
+
+    /* ==========================================================================
+       COMPONENTS: Auth text input & Password input (44px height, 12px radius)
+       ========================================================================== */
+    .input-frame {
+      width: 100%;
+      height: 44px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-input);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: var(--fg-primary);
+      font-size: 14px;
+    }
+
+    .input-frame.is-password {
+      padding-right: 0;
+    }
+
+    .input-frame.is-focused {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    .input-value {
+      flex: 1;
+      min-width: 0;
+      color: var(--fg-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-value.is-masked {
+      letter-spacing: 0.18em;
+      font-size: 13px;
+    }
+
+    .input-placeholder {
+      color: var(--fg-subtle);
+    }
+
+    .focus-caret {
+      display: inline-block;
+      width: 1.5px;
+      height: 17px;
+      background: var(--accent);
+      margin-left: 1px;
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    /* 44x44px Password Visibility Toggle Button */
+    .password-toggle-btn {
+      width: 44px;
+      height: 42px;
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      border-top-right-radius: var(--radius-lg);
+      border-bottom-right-radius: var(--radius-lg);
+    }
+
+    /* Secondary Helper Link Row (Preserves exact Tab order after eye button) */
+    .password-aux-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .forgot-link {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ==========================================================================
+       COMPONENT: Primary CTA button ({components.primary-cta-button})
+       44px height, #FFFFFF fill, #02060B extrabold label, Glacial Cyan halo
+       ========================================================================== */
+    .btn-primary-cta {
+      width: 100%;
+      height: 44px;
+      background: var(--cta-bg);
+      color: var(--cta-fg);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow:
+        0 0 24px rgba(103, 232, 249, 0.25),
+        0 0 12px rgba(255, 255, 255, 0.14);
+    }
+
+    /* Bottom Route-Switch Prompt */
+    .auth-switch-prompt {
+      text-align: center;
+      font-size: 13px;
+      color: var(--fg-muted);
+      padding-top: 4px;
+    }
+
+    .auth-switch-prompt a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      margin-left: 4px;
+    }
+
+    /* ==========================================================================
+       STATE 2: Side-by-Side 420px Right-Stage Snapshots Container
+       ========================================================================== */
+    .dual-snapshots-stage {
+      background: #040911;
+      padding: 36px 28px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .snapshot-column {
+      width: 420px;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .snapshot-caption-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .snapshot-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+    }
+
+    .snapshot-tag.tag-cyan {
+      color: var(--accent);
+      background: rgba(103, 232, 249, 0.10);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .snapshot-tag.tag-crimson {
+      color: var(--destructive-fg);
+      background: rgba(244, 63, 94, 0.14);
+      border: 1px solid rgba(244, 63, 94, 0.45);
+    }
+
+    .snapshot-flow-ref {
+      font-size: 11.5px;
+      color: var(--fg-muted);
+    }
+
+    .snapshot-card {
+      flex: 1;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+    }
+
+    .snapshot-card .auth-form-container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Responsive fallback when viewing the mockup sheet on narrow viewports */
+    @media (max-width: 1023px) {
+      .split-stage-shell {
+        grid-template-columns: 1fr;
+      }
+      .showcase-stage {
+        min-height: 148px;
+        padding: 20px 24px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .showcase-subcopy,
+      .episode-sync-card,
+      .cinema-illustration-svg {
+        display: none;
+      }
+      .showcase-headline {
+        font-size: 22px;
+      }
+      .showcase-headline .serif-accent {
+        font-size: 24px;
+      }
+      .form-stage {
+        padding: 36px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="mockup-sheet">
+
+    <!-- SHEET HEADER -->
+    <header class="sheet-header">
+      <div>
+        <div class="sheet-eyebrow">BMad UX Key Screen · 1:1 Reference</div>
+        <h1 class="sheet-title">Wibu Never Die — <code>/login</code> Sign-In Gateway</h1>
+        <p class="sheet-subtitle">
+          Desktop 55/45 Editorial Split-Stage canonical entry + Post-registration &amp; Credential-error state snapshots.
+        </p>
+      </div>
+      <div class="token-legend" aria-label="Active Glacial Cyan Dark-Cinema Tokens">
+        <span class="token-pill"><span class="swatch" style="background:#020509;"></span>#020509 Canvas</span>
+        <span class="token-pill"><span class="swatch" style="background:#0A1017;"></span>#0A1017 Slate Card</span>
+        <span class="token-pill"><span class="swatch" style="background:#FFFFFF;"></span>#FFFFFF Spotlight CTA</span>
+        <span class="token-pill"><span class="swatch" style="background:#67E8F9;"></span>#67E8F9 Glacial Cyan</span>
+        <span class="token-pill"><span class="swatch" style="background:#F43F5E;"></span>#F43F5E Destructive</span>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         SECTION 1: STATE 1 — CANONICAL /login (DESKTOP 55/45 SPLIT-STAGE)
+         ====================================================================== -->
+    <section class="state-section" aria-labelledby="state-1-heading">
+      <div class="state-heading-row">
+        <div class="state-label">
+          <span class="state-index">State 1</span>
+          <h2 id="state-1-heading" class="state-title">Canonical <code>/login</code> — Desktop 55/45 Editorial Split-Stage</h2>
+        </div>
+        <span class="state-meta">1440×900 Desktop Viewport · Email Input Focused (<code>#38BDF8</code> Ring) · Flow 1 &amp; Flow 3</span>
+      </div>
+
+      <div class="browser-window">
+        <!-- Browser Chrome -->
+        <div class="browser-chrome">
+          <div class="window-controls" aria-hidden="true">
+            <span class="win-dot close"></span>
+            <span class="win-dot min"></span>
+            <span class="win-dot max"></span>
+          </div>
+          <div class="address-bar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span><span class="domain">wibuneverdie.app</span><span class="route">/login</span></span>
+          </div>
+          <span class="chrome-spec-tag">Split-Stage Auth Shell · 55 / 45</span>
+        </div>
+
+        <!-- Split-Stage Auth Shell -->
+        <div class="split-stage-shell">
+
+          <!-- LEFT 55% SHOWCASE PANEL (#0A1017 Duotone Glacial Cyan Cinema Poster) -->
+          <aside class="showcase-stage" aria-label="Wibu Never Die Brand Showcase">
+            <div class="showcase-artwork" aria-hidden="true">
+              <div class="manga-frame-grid"></div>
+
+              <!-- Pure Inline SVG Duotone Glacial Cyan Anime/Manga Screening Horizon -->
+              <svg class="cinema-illustration-svg" viewBox="0 0 680 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="cyanMoonGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.34" />
+                    <stop offset="55%" stop-color="#38BDF8" stop-opacity="0.10" />
+                    <stop offset="100%" stop-color="#0A1017" stop-opacity="0" />
+                  </radialGradient>
+                  <linearGradient id="panelStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#1B2938" stop-opacity="0.15" />
+                  </linearGradient>
+                  <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#67E8F9" stop-opacity="0.16" />
+                    <stop offset="100%" stop-color="#38BDF8" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Diagonal Cinema Projection Beam -->
+                <polygon points="90,10 380,10 610,410 210,410" fill="url(#beamGrad)" />
+
+                <!-- Lunar Screening Halo -->
+                <circle cx="330" cy="175" r="155" fill="url(#cyanMoonGlow)" />
+                <circle cx="330" cy="175" r="78" stroke="#67E8F9" stroke-opacity="0.32" stroke-width="1.2" fill="#0A1017" fill-opacity="0.45" />
+                <circle cx="330" cy="175" r="62" stroke="#38BDF8" stroke-opacity="0.18" stroke-dasharray="4 6" stroke-width="1" />
+
+                <!-- Asymmetric Manga Panel Cuts -->
+                <path d="M74 58 L272 58 L238 258 L74 258 Z" fill="#0F1823" fill-opacity="0.55" stroke="url(#panelStroke)" stroke-width="1.2" />
+                <path d="M292 42 L568 42 L532 196 L264 196 Z" fill="#0A1017" fill-opacity="0.42" stroke="url(#panelStroke)" stroke-width="1.2" />
+                <path d="M256 212 L592 212 L566 346 L228 346 Z" fill="#0F1823" fill-opacity="0.48" stroke="url(#panelStroke)" stroke-width="1.2" />
+
+                <!-- Stylized Nocturnal Rooftop / Torii Silhouette Geometry -->
+                <line x1="115" y1="142" x2="225" y2="142" stroke="#67E8F9" stroke-opacity="0.55" stroke-width="2" />
+                <line x1="128" y1="158" x2="212" y2="158" stroke="#38BDF8" stroke-opacity="0.38" stroke-width="1.5" />
+                <line x1="146" y1="142" x2="146" y2="238" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="1.5" />
+                <line x1="194" y1="142" x2="194" y2="238" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="1.5" />
+
+                <!-- Cinema Aspect-Ratio Crop Marks & Speedlines -->
+                <path d="M312 82 H332 M312 82 V102" stroke="#67E8F9" stroke-opacity="0.65" stroke-width="1.5" />
+                <path d="M536 82 H516 M536 82 V102" stroke="#67E8F9" stroke-opacity="0.65" stroke-width="1.5" />
+                <line x1="300" y1="278" x2="520" y2="278" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="1" />
+                <line x1="340" y1="294" x2="485" y2="294" stroke="#67E8F9" stroke-opacity="0.45" stroke-width="1.5" />
+
+                <!-- Telemetry Timecode Readout -->
+                <text x="278" y="246" fill="#67E8F9" fill-opacity="0.65" font-family="monospace" font-size="10" letter-spacing="3">TC 00:19:42:14 // 1080P</text>
+              </svg>
+
+              <div class="showcase-seam-fade"></div>
+            </div>
+
+            <!-- Top Wordmark -->
+            <div class="showcase-top">
+              <div class="brand-wordmark">
+                <span class="brand-emblem" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="6 4 20 12 6 20 6 4" fill="rgba(103, 232, 249, 0.22)"></polygon>
+                  </svg>
+                </span>
+                <span class="brand-name">Wibu <span>Never Die</span></span>
+              </div>
+              <span class="screening-telemetry">LATE-NIGHT SCREENING ROOM</span>
+            </div>
+
+            <!-- Bottom Badge, Editorial Headline & Episode-Progress Card -->
+            <div class="showcase-bottom">
+              <div class="micro-badge">
+                <span class="micro-badge-dot" aria-hidden="true"></span>
+                <span>ANIME · MANGA · SYNC</span>
+              </div>
+
+              <h3 class="showcase-headline">
+                Pick up right where the <span class="serif-accent">episode</span> ended.
+              </h3>
+
+              <p class="showcase-subcopy">
+                Zero-clutter dark cinema streaming and chapter-synced manga reading, ready across every late-night session.
+              </p>
+
+              <!-- Episode-Progress Card Detail -->
+              <div class="episode-sync-card" aria-label="Sample synced episode progress">
+                <div class="ep-thumb" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5.14v14l11-7-11-7z"></path>
+                  </svg>
+                </div>
+                <div class="ep-meta">
+                  <div class="ep-meta-top">
+                    <span class="ep-series">Sousou no Frieren · Episode 14</span>
+                    <span class="ep-timestamp">19:42 / 24:00</span>
+                  </div>
+                  <div class="ep-chapter-note">Watchlist &amp; Ch. 29 bookmark synced automatically</div>
+                  <div class="ep-progress-track">
+                    <div class="ep-progress-fill"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- RIGHT 45% FORM PANEL (#020509 Canvas, 400px Centered Form) -->
+          <div class="form-stage">
+            <form class="auth-form-container" action="#login" method="post">
+              <div class="auth-header">
+                <h3 class="auth-heading">Welcome <span class="serif-accent">back</span></h3>
+                <p class="auth-subtitle">Sign in to sync your watchlist and reading progress.</p>
+              </div>
+
+              <!-- 1. Google OAuth Button -->
+              <button type="button" class="btn-google-oauth">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.8 9.1-9.2 0-.6-.1-1.1-.2-1.6H12z"/>
+                  <path fill="#34A853" d="M3.6 7.4l3.2 2.4C7.7 7.8 9.7 6 12 6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+                  <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.6 3 4.8 5 8.7 5z"/>
+                  <path fill="#4285F4" d="M21.1 12.3c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.3-1.1 2.4-2.1 3.1l2.9 2.4c1.7-1.6 2.8-4 2.8-7.8z"/>
+                </svg>
+                <span>Sign in with Google</span>
+              </button>
+
+              <!-- Hairline Divider -->
+              <div class="auth-divider">or continue with email</div>
+
+              <!-- 2. Inputs Stack -->
+              <div class="fields-stack">
+                <!-- Email Input (Focused State with #38BDF8 Ring) -->
+                <div class="field-group">
+                  <label class="field-label" for="s1-email">Email</label>
+                  <div class="input-frame is-focused" id="s1-email" role="textbox" aria-label="Email">
+                    <span class="input-value">minh@wibu.dev<span class="focus-caret" aria-hidden="true"></span></span>
+                  </div>
+                </div>
+
+                <!-- Password Input + 44x44 Eye Toggle + Forgot Password Link -->
+                <div class="field-group">
+                  <label class="field-label" for="s1-password">Password</label>
+                  <div class="input-frame is-password" id="s1-password" role="textbox" aria-label="Password">
+                    <span class="input-value is-masked">••••••••••••</span>
+                    <button type="button" class="password-toggle-btn" aria-label="Show password">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="password-aux-row">
+                    <a class="forgot-link" href="#forgot-password">Forgot password?</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Spotlight White Primary CTA Button -->
+              <button type="button" class="btn-primary-cta">Sign In</button>
+
+              <!-- 4. Bottom Route-Switch Link -->
+              <p class="auth-switch-prompt">
+                New to Wibu Never Die?<a href="#register">Create an account</a>
+              </p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 2: STATE 2 — POST-REGISTRATION ARRIVAL & FAILED ATTEMPT STATES
+         ====================================================================== -->
+    <section class="state-section" aria-labelledby="state-2-heading">
+      <div class="state-heading-row">
+        <div class="state-label">
+          <span class="state-index">State 2</span>
+          <h2 id="state-2-heading" class="state-title">Post-Registration Arrival &amp; Failed Credential States</h2>
+        </div>
+        <span class="state-meta">Two 420px Right-Stage Form Snapshots · Preserved Email &amp; Inline <code>Auth status banner</code> Variants</span>
+      </div>
+
+      <div class="browser-window">
+        <!-- Browser Chrome -->
+        <div class="browser-chrome">
+          <div class="window-controls" aria-hidden="true">
+            <span class="win-dot close"></span>
+            <span class="win-dot min"></span>
+            <span class="win-dot max"></span>
+          </div>
+          <div class="address-bar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#67E8F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span><span class="domain">wibuneverdie.app</span><span class="route">/login</span></span>
+          </div>
+          <span class="chrome-spec-tag">Right-Stage State Comparison · 2 × 420px</span>
+        </div>
+
+        <div class="dual-snapshots-stage">
+
+          <!-- SNAPSHOT 2A: Post-Signup Arrival (Glacial Cyan Status Banner + Pre-filled Email + Password Focused) -->
+          <div class="snapshot-column">
+            <div class="snapshot-caption-bar">
+              <span class="snapshot-tag tag-cyan">Snapshot 2A · Post-Registration Arrival</span>
+              <span class="snapshot-flow-ref">Flow 1 · Step 3 (<code>role="status"</code>)</span>
+            </div>
+
+            <div class="snapshot-card">
+              <form class="auth-form-container" action="#login-post-signup" method="post">
+                <div class="auth-header">
+                  <h3 class="auth-heading">Welcome <span class="serif-accent">back</span></h3>
+                  <p class="auth-subtitle">Sign in to sync your watchlist and reading progress.</p>
+                </div>
+
+                <!-- Glacial Cyan Confirmation Auth Status Banner -->
+                <div class="auth-status-banner is-info" role="status" aria-live="polite">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                  <span>Account created — please sign in to continue.</span>
+                </div>
+
+                <button type="button" class="btn-google-oauth">
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.8 9.1-9.2 0-.6-.1-1.1-.2-1.6H12z"/>
+                    <path fill="#34A853" d="M3.6 7.4l3.2 2.4C7.7 7.8 9.7 6 12 6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+                    <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.6 3 4.8 5 8.7 5z"/>
+                    <path fill="#4285F4" d="M21.1 12.3c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.3-1.1 2.4-2.1 3.1l2.9 2.4c1.7-1.6 2.8-4 2.8-7.8z"/>
+                  </svg>
+                  <span>Sign in with Google</span>
+                </button>
+
+                <div class="auth-divider">or continue with email</div>
+
+                <div class="fields-stack">
+                  <!-- Pre-filled Email from Router Navigation State -->
+                  <div class="field-group">
+                    <label class="field-label" for="s2a-email">Email</label>
+                    <div class="input-frame" id="s2a-email" role="textbox" aria-label="Email">
+                      <span class="input-value">minh@wibu.dev</span>
+                    </div>
+                  </div>
+
+                  <!-- Auto-Focused Password Ready for Immediate Entry -->
+                  <div class="field-group">
+                    <label class="field-label" for="s2a-password">Password</label>
+                    <div class="input-frame is-password is-focused" id="s2a-password" role="textbox" aria-label="Password">
+                      <span class="input-value"><span class="focus-caret" aria-hidden="true"></span><span class="input-placeholder" style="margin-left:2px;">Enter your password</span></span>
+                      <button type="button" class="password-toggle-btn" aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="password-aux-row">
+                      <a class="forgot-link" href="#forgot-password">Forgot password?</a>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-primary-cta">Sign In</button>
+
+                <p class="auth-switch-prompt">
+                  New to Wibu Never Die?<a href="#register">Create an account</a>
+                </p>
+              </form>
+            </div>
+          </div>
+
+          <!-- SNAPSHOT 2B: Failed Credential Login (Signal Crimson Error Banner + Preserved Email) -->
+          <div class="snapshot-column">
+            <div class="snapshot-caption-bar">
+              <span class="snapshot-tag tag-crimson">Snapshot 2B · Failed Credential Attempt</span>
+              <span class="snapshot-flow-ref">Flow 1 · Failure Path (<code>role="alert"</code>)</span>
+            </div>
+
+            <div class="snapshot-card">
+              <form class="auth-form-container" action="#login-failed" method="post">
+                <div class="auth-header">
+                  <h3 class="auth-heading">Welcome <span class="serif-accent">back</span></h3>
+                  <p class="auth-subtitle">Sign in to sync your watchlist and reading progress.</p>
+                </div>
+
+                <!-- Signal Crimson Destructive Auth Status Banner -->
+                <div class="auth-status-banner is-error" role="alert" aria-live="assertive">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>Invalid email or password. Please check your details and try again.</span>
+                </div>
+
+                <button type="button" class="btn-google-oauth">
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.8 9.1-9.2 0-.6-.1-1.1-.2-1.6H12z"/>
+                    <path fill="#34A853" d="M3.6 7.4l3.2 2.4C7.7 7.8 9.7 6 12 6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.4z"/>
+                    <path fill="#FBBC05" d="M12 21.5c2.5 0 4.7-.8 6.3-2.3l-2.9-2.4c-.8.6-1.9 1-3.4 1-3.8 0-5.2-2.5-5.5-3.8l-3.2 2.5c1.6 3 4.8 5 8.7 5z"/>
+                    <path fill="#4285F4" d="M21.1 12.3c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.3-1.1 2.4-2.1 3.1l2.9 2.4c1.7-1.6 2.8-4 2.8-7.8z"/>
+                  </svg>
+                  <span>Sign in with Google</span>
+                </button>
+
+                <div class="auth-divider">or continue with email</div>
+
+                <div class="fields-stack">
+                  <!-- Preserved Email Input (Never wiped on failed login) -->
+                  <div class="field-group">
+                    <label class="field-label" for="s2b-email">Email</label>
+                    <div class="input-frame" id="s2b-email" role="textbox" aria-label="Email">
+                      <span class="input-value">minh@wibu.dev</span>
+                    </div>
+                  </div>
+
+                  <!-- Masked Password Input -->
+                  <div class="field-group">
+                    <label class="field-label" for="s2b-password">Password</label>
+                    <div class="input-frame is-password" id="s2b-password" role="textbox" aria-label="Password">
+                      <span class="input-value is-masked">••••••••••</span>
+                      <button type="button" class="password-toggle-btn" aria-label="Show password">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="password-aux-row">
+                      <a class="forgot-link" href="#forgot-password">Forgot password?</a>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-primary-cta">Sign In</button>
+
+                <p class="auth-switch-prompt">
+                  New to Wibu Never Die?<a href="#register">Create an account</a>
+                </p>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
