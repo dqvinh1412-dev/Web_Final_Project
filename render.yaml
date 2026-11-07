@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fe-web-project
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      # Định tuyến SPA để tránh lỗi 404 khi reload trang
+      - type: rewrite
+        source: /*
+        destination: /index.html
